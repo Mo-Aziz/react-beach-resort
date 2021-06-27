@@ -3,7 +3,12 @@ import { useContext } from "react";
 import { RoomContext } from "../context";
 import Title from "../components/Title";
 
-export default function RoomsFilter() {
+// get all unique types of rooms
+const getUnique = (items, value) => {
+  return [...new Set(items.map((item) => item[value]))];
+};
+
+export default function RoomsFilter({ rooms }) {
   const context = useContext(RoomContext);
   const {
     handleChange,
@@ -17,13 +22,112 @@ export default function RoomsFilter() {
     breakfast,
     pets,
   } = context;
-  return <section className="filter-container">
-      <Title title="search rooms"/>
-      <form className="filter-from">
-          {/* select type */}
-          
-          {/* end of select type */}
-      </form>
 
-  </section>;
+  //   get unique types
+  let types = getUnique(rooms, "type");
+  //   add all to room types
+  types = ["all", ...types];
+  //  map to jsx of unique room types
+  types = types.map((item, index) => {
+    return (
+      <option key={index} value={item}>
+        {item}
+      </option>
+    );
+  });
+
+  let people = getUnique(rooms, "capacity");
+  people = people.map((item, index) => {
+    return (
+      <option key={index} value={item}>
+        {item}
+      </option>
+    );
+  });
+
+  return (
+    <section className="filter-container">
+      <Title title="search rooms" />
+      <form className="filter-form">
+        {/* select type */}
+        <div className="form-group">
+          <label htmlFor="type">room type</label>
+          <select
+            name="type"
+            id="type"
+            value={type}
+            className="form-control"
+            onChange={handleChange}
+          >
+            {types}
+          </select>
+        </div>
+        {/* end of select type */}
+        {/* guest type */}
+        <div className="form-group">
+          <label htmlFor="capacity">Guest</label>
+          <select
+            name="capacity"
+            id="capacity"
+            value={capacity}
+            className="form-control"
+            onChange={handleChange}
+          >
+            {people}
+          </select>
+        </div>
+        {/* end of guest type */}
+        {/* room price */}
+        <div className="form-group">
+          <label htmlFor="price">room price ${price}</label>
+          <input
+            type="range"
+            name="price"
+            id="price"
+            min={minPrice}
+            max={maxPrice}
+            value={price}
+            onChange={handleChange}
+            className="form-control"
+          />
+        </div>
+        {/* end of room price */}
+        {/* filter by size */}
+        <div className="form-group">
+          <label htmlFor="size">room size</label>
+          <div className="size-inputs">
+            <input
+              type="number"
+              name="minSize"
+              id="size"
+              value={minSize}
+              onChange={handleChange}
+              className="size-input"
+            />
+            <input
+              type="number"
+              name="maxSize"
+              id="size"
+              value={maxSize}
+              onChange={handleChange}
+              className="size-input"
+            />
+          </div>
+        </div>
+        {/* End of size */}
+        {/* extras */}
+        <div className="form-group">
+            <div className="single-extra">
+                <input type="checkbox" name="breakfast" id="breakfast" checked={breakfast} onChange={handleChange} />
+              <label htmlFor="breakfast"> breakfast</label>
+            </div>
+            <div className="single-extra">
+                <input type="checkbox" name="pets" id="pets" checked={pets} onChange={handleChange} />
+              <label htmlFor="pets"> pets</label>
+            </div>
+        </div>
+        {/*  end of extras */}
+      </form>
+    </section>
+  );
 }
