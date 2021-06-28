@@ -82,8 +82,6 @@ class RoomProvider extends Component {
       type,
       capacity,
       price,
-      minPrice,
-      maxPrice,
       minSize,
       maxSize,
       breakfast,
