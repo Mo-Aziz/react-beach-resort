@@ -535,7 +535,7 @@ export default [
     },
     fields: {
       name: "family basic",
-      slug: "family-basic",
+      slug: "family basic",
       type: "family",
       price: 350,
       size: 550,

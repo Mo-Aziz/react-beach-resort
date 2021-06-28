@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import items from "./data";
+// import items from "./data";
+import Client from "./contentful";
 
 const RoomContext = React.createContext();
 
@@ -21,21 +22,32 @@ class RoomProvider extends Component {
   };
 
   //   get data
-  componentDidMount() {
-    let rooms = this.formatData(items);
-    let featuredRooms = rooms.filter((room) => room.featured === true);
-    let maxPrice = Math.max(...rooms.map((item) => item.price));
-    let maxSize = Math.max(...rooms.map((item) => item.size));
 
-    this.setState({
-      rooms,
-      featuredRooms,
-      sortedRooms: rooms,
-      loading: false,
-      price: maxPrice,
-      maxPrice,
-      maxSize,
-    });
+  getData = async () => {
+    try {
+      let response = await Client.getEntries({
+        content_type: "beachResortRoomReact",
+      });
+      let rooms = this.formatData(response.items);
+      let featuredRooms = rooms.filter((room) => room.featured === true);
+      let maxPrice = Math.max(...rooms.map((item) => item.price));
+      let maxSize = Math.max(...rooms.map((item) => item.size));
+
+      this.setState({
+        rooms,
+        featuredRooms,
+        sortedRooms: rooms,
+        loading: false,
+        price: maxPrice,
+        maxPrice,
+        maxSize,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  componentDidMount() {
+    this.getData();
   }
   formatData(items) {
     let tempItems = items.map((item) => {
@@ -93,19 +105,21 @@ class RoomProvider extends Component {
     }
 
     // filter by price
-tempRooms = tempRooms.filter(room => room.price <= price);
+    tempRooms = tempRooms.filter((room) => room.price <= price);
 
-// filter by size
-tempRooms = tempRooms.filter(room => room.size >= minSize && room.size<= maxSize);
+    // filter by size
+    tempRooms = tempRooms.filter(
+      (room) => room.size >= minSize && room.size <= maxSize
+    );
 
-//filter breakfast
-if(breakfast){
-  tempRooms = tempRooms.filter(room =>room.breakfast === true);
-}
-// filter by pets
-if(pets){
-  tempRooms = tempRooms.filter(room => room.pets === true)
-}
+    //filter breakfast
+    if (breakfast) {
+      tempRooms = tempRooms.filter((room) => room.breakfast === true);
+    }
+    // filter by pets
+    if (pets) {
+      tempRooms = tempRooms.filter((room) => room.pets === true);
+    }
     // change state
     this.setState({
       sortedRooms: tempRooms,
